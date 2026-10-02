@@ -20,6 +20,11 @@ import {
   Edit3,
 } from "lucide-react";
 import VendorNavbar from "../components/VendorNavbar";
+import {
+  askVendorAI,
+  generateGrievance as requestGrievanceDraft,
+  processVoice,
+} from "../services/aiApi";
 
 const suggestedQuestions = [
   "What does my latest notice mean?",
@@ -73,6 +78,8 @@ export default function VendorAI() {
 
   const [draftGenerated, setDraftGenerated] =
     useState(false);
+  const [grievanceLoading, setGrievanceLoading] = useState(false);
+  const [grievanceError, setGrievanceError] = useState("");
 
   const chatEndRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -86,6 +93,58 @@ export default function VendorAI() {
   // ---------------------------------------------------------
   // VOICE INPUT
   // ---------------------------------------------------------
+
+  const handleVoiceMessage = async (transcript) => {
+    const question = transcript.trim();
+
+    if (!question || loading) return;
+
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), role: "user", content: question },
+    ]);
+    setLoading(true);
+
+    try {
+      const result = await processVoice(question);
+      const reply = result.reply?.trim();
+
+      if (!reply) {
+        throw new Error("AI service is currently unavailable. Please try again.");
+      }
+
+      const assistantMessage = {
+        id: Date.now() + 1,
+        role: "assistant",
+        content: result.suggested_action
+          ? `${reply}\n\nSuggested action: ${result.suggested_action}`
+          : reply,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(reply);
+        utterance.lang = "hi-IN";
+        utterance.onend = () => setPlayingId(null);
+        utterance.onerror = () => setPlayingId(null);
+        setPlayingId(assistantMessage.id);
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "assistant",
+          content: error.message || "AI service is currently unavailable. Please try again.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const startListening = () => {
     const SpeechRecognition =
@@ -101,8 +160,7 @@ export default function VendorAI() {
 
     const recognition = new SpeechRecognition();
 
-    recognition.lang =
-      languageMap[language] || "en-IN";
+    recognition.lang = "hi-IN";
 
     recognition.interimResults = false;
     recognition.continuous = false;
@@ -115,7 +173,7 @@ export default function VendorAI() {
       const transcript =
         event.results[0][0].transcript;
 
-      setInput(transcript);
+      handleVoiceMessage(transcript);
     };
 
     recognition.onerror = () => {
@@ -177,48 +235,10 @@ export default function VendorAI() {
   };
 
   // ---------------------------------------------------------
-  // DEMO AI RESPONSE
-  // ---------------------------------------------------------
-
-  const generateDemoResponse = (question) => {
-    const q = question.toLowerCase();
-
-    if (
-      q.includes("notice") ||
-      q.includes("meaning")
-    ) {
-      return "Aap apne Notices section mein notice upload karke uska text OCR se extract kar sakti hain. Uske baad StreetBridge us information ko simpler language mein explain karega.";
-    }
-
-    if (
-      q.includes("document") ||
-      q.includes("missing")
-    ) {
-      return "Aapke current demo records mein Vending Certificate abhi add nahi hai. Documents section mein jaakar us document ko upload kar sakti hain.";
-    }
-
-    if (
-      q.includes("grievance") ||
-      q.includes("complaint")
-    ) {
-      return "Bilkul. Grievance Preparation mode open karke incident ki basic details fill kijiye. Uske baad StreetBridge ek structured draft prepare karega jise aap review aur edit kar sakti hain.";
-    }
-
-    if (
-      q.includes("location") ||
-      q.includes("area")
-    ) {
-      return "Location section mein aap aaj ka working area select kar sakti hain. Is setting ka use area-related information ko personalise karne ke liye kiya ja sakta hai.";
-    }
-
-    return "Main aapko notices, documents, working-area information aur grievance preparation jaise StreetBridge features ko samajhne mein help kar sakta hoon.";
-  };
-
-  // ---------------------------------------------------------
   // SEND
   // ---------------------------------------------------------
 
-  const sendMessage = (customText) => {
+  const sendMessage = async (customText) => {
     const question =
       (customText ?? input).trim();
 
@@ -238,22 +258,38 @@ export default function VendorAI() {
     setInput("");
     setLoading(true);
 
-    setTimeout(() => {
-      const reply = generateDemoResponse(question);
+    try {
+      const result = await askVendorAI(question);
+      const reply = result.reply?.trim();
+
+      if (!reply) {
+        throw new Error("AI service is currently unavailable. Please try again.");
+      }
 
       const assistantMessage = {
         id: Date.now() + 1,
         role: "assistant",
-        content: reply,
+        content: result.suggested_action
+          ? `${reply}\n\nSuggested action: ${result.suggested_action}`
+          : reply,
       };
 
       setMessages((prev) => [
         ...prev,
         assistantMessage,
       ]);
-
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "assistant",
+          content: error.message || "AI service is currently unavailable. Please try again.",
+        },
+      ]);
+    } finally {
       setLoading(false);
-    }, 900);
+    }
   };
 
   // ---------------------------------------------------------
@@ -296,38 +332,46 @@ export default function VendorAI() {
     }
   };
 
-  const generateGrievanceDraft = () => {
-    const date = grievance.date || "the date provided";
-    const location =
-      grievance.location || "the location provided";
+  const generateGrievanceDraft = async () => {
+    const problem = [
+      grievance.issue && `Issue: ${grievance.issue}`,
+      grievance.description && `Details: ${grievance.description}`,
+      `Notice received: ${grievance.noticeReceived}`,
+      `Supporting record available: ${grievance.supportingRecord}`,
+      grievance.request && `Requested action: ${grievance.request}`,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
 
-    const draft = `Subject: Request regarding vendor-related issue
+    if (!grievance.issue.trim() && !grievance.description.trim()) {
+      setGrievanceError("Please describe the issue before preparing a draft.");
+      return;
+    }
 
-I am submitting this grievance regarding ${grievance.issue || "a vendor-related issue"}.
+    setGrievanceError("");
+    setGrievanceLoading(true);
 
-Date of incident: ${date}
-Location: ${location}
+    try {
+      const result = await requestGrievanceDraft({
+        problem,
+        vendor_name: "",
+        location: grievance.location,
+        authority: "",
+        date: grievance.date.split("-").reverse().join("/"),
+      });
 
-Description:
-${grievance.description || "The incident details are provided above."}
+      if (!result.draft?.trim()) {
+        throw new Error("AI service is currently unavailable. Please try again.");
+      }
 
-Notice received:
-${grievance.noticeReceived}
-
-Supporting record available:
-${grievance.supportingRecord}
-
-Requested action:
-${grievance.request || "I request that the concerned authority review the matter and provide appropriate information or assistance."}
-
-I have provided the information available to me and request that the matter be reviewed accordingly.
-
-Name: Priya Singh
-`;
-
-    setGrievanceDraft(draft);
-    setDraftGenerated(true);
-    setGrievanceStep(4);
+      setGrievanceDraft(result.draft);
+      setDraftGenerated(true);
+      setGrievanceStep(4);
+    } catch (error) {
+      setGrievanceError(error.message || "AI service is currently unavailable. Please try again.");
+    } finally {
+      setGrievanceLoading(false);
+    }
   };
 
   const resetGrievance = () => {
@@ -335,6 +379,7 @@ Name: Priya Singh
     setGrievanceStep(1);
     setGrievanceDraft("");
     setDraftGenerated(false);
+    setGrievanceError("");
   };
 
   const downloadDraft = () => {
@@ -1151,13 +1196,24 @@ Name: Priya Singh
 
                         <button
                           onClick={generateGrievanceDraft}
-                          className="inline-flex items-center gap-2 px-5 py-3 bg-[#C97B63] text-white rounded-lg text-sm font-semibold"
+                          disabled={grievanceLoading}
+                          className="inline-flex items-center gap-2 px-5 py-3 bg-[#C97B63] text-white rounded-lg text-sm font-semibold disabled:opacity-60"
                         >
-                          <Sparkles size={15} />
-                          Prepare Draft
+                          {grievanceLoading ? (
+                            <Loader2 size={15} className="animate-spin" />
+                          ) : (
+                            <Sparkles size={15} />
+                          )}
+                          {grievanceLoading ? "Preparing..." : "Prepare Draft"}
                         </button>
 
                       </div>
+
+                      {grievanceError && (
+                        <p role="alert" className="mt-4 text-sm text-[#A94F45]">
+                          {grievanceError}
+                        </p>
+                      )}
 
                     </div>
                   )}
