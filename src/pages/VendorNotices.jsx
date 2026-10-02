@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { createWorker } from "tesseract.js";
 import VendorNavbar from "../components/VendorNavbar";
+import { decodeNotice } from "../services/aiApi";
 
 const initialNotices = [
   {
@@ -109,6 +110,17 @@ const languageMap = {
   Bengali: "bn-IN",
 };
 
+const extractReferenceNumber = (text, fallback) => {
+  const match = text.match(
+    /\b(?:notice|reference|ref)\s*(?:no\.?|number)\s*[:#-]?\s*([A-Z0-9][A-Z0-9/-]*)/i
+  );
+
+  if (match) return match[1];
+  return fallback && fallback.toLowerCase() !== "no"
+    ? fallback
+    : "Not specified";
+};
+
 export default function VendorNotices() {
   const [notices, setNotices] = useState(initialNotices);
   const [selectedNotice, setSelectedNotice] = useState(initialNotices[0]);
@@ -126,9 +138,9 @@ export default function VendorNotices() {
   const [ocrProgress, setOcrProgress] = useState(0);
 
   const [decodedText, setDecodedText] = useState("");
+  const [noticeText, setNoticeText] = useState("");
   const [selectedFileName, setSelectedFileName] = useState("");
 
-  const [aiLoading, setAiLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const [error, setError] = useState("");
@@ -151,6 +163,7 @@ export default function VendorNotices() {
     setError("");
     setDecodedText("");
     setSelectedFileName("");
+    setNoticeText("");
     setOcrProgress(0);
     setProcessingStep("");
     setShowUpload(true);
@@ -163,6 +176,7 @@ export default function VendorNotices() {
     setError("");
     setDecodedText("");
     setSelectedFileName("");
+    setNoticeText("");
     setOcrProgress(0);
     setProcessingStep("");
   };
@@ -197,25 +211,90 @@ export default function VendorNotices() {
   // AI API
   // ------------------------------------------------------------
 
-  const analyzeWithAI = async (text, language = selectedLanguage) => {
-    const response = await fetch("/api/analyze-notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text,
-        language,
-      }),
-    });
+  const analyzeWithAI = async (text) => {
+    const result = await decodeNotice(text);
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "AI analysis failed.");
+    if (!result.data || typeof result.data !== "object") {
+      throw new Error("AI service is currently unavailable. Please try again.");
     }
 
-    return data;
+    return result.data;
+  };
+
+  const saveDecodedNotice = (text, result) => {
+    const today = new Date();
+    const referenceNumber = extractReferenceNumber(
+      text,
+      result.reference_number
+    );
+    const newNotice = {
+      id: `uploaded-${Date.now()}`,
+      title: result.notice_type || "Decoded Notice",
+      type: result.notice_type || "Information",
+      date: today.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+      source: result.authority || "Extracted from notice",
+      status: "New",
+      location: "Not specified",
+      original: text,
+      summary: result.summary || "The notice has been processed successfully.",
+      action: result.action_required || "Review the original notice for the complete instructions.",
+      importantDate: result.deadline || "Not specified",
+      referenceNumber,
+      importantPoints: Array.isArray(result.important_points)
+        ? result.important_points
+            .map((point) =>
+              /^reference number:/i.test(point)
+                ? `Reference number: ${referenceNumber}`
+                : point
+            )
+            .filter(
+              (point) =>
+                referenceNumber !== "Not specified" ||
+                !/^reference number:\s*no$/i.test(point)
+            )
+        : [],
+    };
+
+    setNotices((prev) => [newNotice, ...prev]);
+    setSelectedNotice(newNotice);
+    setProcessingStep("complete");
+
+    setTimeout(() => {
+      setShowUpload(false);
+      setProcessing(false);
+      setProcessingStep("");
+      setSelectedFileName("");
+      setOcrProgress(0);
+      setDecodedText("");
+      setNoticeText("");
+    }, 900);
+  };
+
+  const decodePastedNotice = async () => {
+    const text = noticeText.trim();
+
+    if (!text) {
+      setError("Please paste the notice text before decoding.");
+      return;
+    }
+
+    setError("");
+    setProcessing(true);
+    setProcessingStep("ai");
+    setDecodedText(text);
+
+    try {
+      const result = await analyzeWithAI(text);
+      saveDecodedNotice(text, result);
+    } catch (err) {
+      setError(err.message || "AI service is currently unavailable. Please try again.");
+      setProcessing(false);
+      setProcessingStep("");
+    }
   };
 
   // ------------------------------------------------------------
@@ -258,49 +337,8 @@ export default function VendorNotices() {
       // STEP 2 — AI
       setProcessingStep("ai");
 
-      const aiResult = await analyzeWithAI(
-        extractedText,
-        selectedLanguage
-      );
-
-      const today = new Date();
-
-      const newNotice = {
-        id: `uploaded-${Date.now()}`,
-        title: aiResult.title || "Uploaded Notice",
-        type: aiResult.type || "Information",
-        date: today.toLocaleDateString("en-IN", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
-        source: aiResult.source || "Extracted from notice",
-        status: "New",
-        location: aiResult.location || "Not specified",
-        original: extractedText,
-        summary:
-          aiResult.summary ||
-          "The notice has been processed successfully.",
-        action:
-          aiResult.action ||
-          "Review the original notice for the complete instructions.",
-        importantDate:
-          aiResult.importantDate || "Not specified",
-      };
-
-      setNotices((prev) => [newNotice, ...prev]);
-      setSelectedNotice(newNotice);
-
-      setProcessingStep("complete");
-
-      setTimeout(() => {
-        setShowUpload(false);
-        setProcessing(false);
-        setProcessingStep("");
-        setSelectedFileName("");
-        setOcrProgress(0);
-        setDecodedText("");
-      }, 900);
+      const aiResult = await analyzeWithAI(extractedText);
+      saveDecodedNotice(extractedText, aiResult);
     } catch (err) {
       console.error(err);
 
@@ -318,50 +356,10 @@ export default function VendorNotices() {
   // LANGUAGE CHANGE
   // ------------------------------------------------------------
 
-  const handleLanguageChange = async (language) => {
+  const handleLanguageChange = (language) => {
     setSelectedLanguage(language);
     setIsPlaying(false);
-
-    if (!selectedNotice?.original) return;
-
-    try {
-      setAiLoading(true);
-      setError("");
-
-      const result = await analyzeWithAI(
-        selectedNotice.original,
-        language
-      );
-
-      const updatedNotice = {
-        ...selectedNotice,
-        title: result.title || selectedNotice.title,
-        type: result.type || selectedNotice.type,
-        source: result.source || selectedNotice.source,
-        location: result.location || selectedNotice.location,
-        summary: result.summary || selectedNotice.summary,
-        action: result.action || selectedNotice.action,
-        importantDate:
-          result.importantDate || selectedNotice.importantDate,
-      };
-
-      setSelectedNotice(updatedNotice);
-
-      setNotices((prev) =>
-        prev.map((notice) =>
-          notice.id === updatedNotice.id
-            ? updatedNotice
-            : notice
-        )
-      );
-    } catch (err) {
-      console.error(err);
-      setError(
-        err.message || "Could not translate/analyse this notice."
-      );
-    } finally {
-      setAiLoading(false);
-    }
+    window.speechSynthesis?.cancel();
   };
 
   // ------------------------------------------------------------
@@ -819,8 +817,7 @@ export default function VendorNotices() {
                                 e.target.value
                               )
                             }
-                            disabled={aiLoading}
-                            className="appearance-none pl-9 pr-8 py-2 border border-[#DED1C6] rounded-lg bg-white text-sm text-[#5A4638] outline-none cursor-pointer disabled:opacity-60"
+                            className="appearance-none pl-9 pr-8 py-2 border border-[#DED1C6] rounded-lg bg-white text-sm text-[#5A4638] outline-none cursor-pointer"
                           >
                             <option>English</option>
                             <option>Hindi</option>
@@ -853,22 +850,9 @@ export default function VendorNotices() {
 
                     <div className="mt-6 max-w-3xl">
 
-                      {aiLoading ? (
-                        <div className="flex items-center gap-3 py-5 text-[#8A7567]">
-                          <Loader2
-                            size={19}
-                            className="animate-spin text-[#C97B63]"
-                          />
-                          <span>
-                            Translating and re-analysing this
-                            notice...
-                          </span>
-                        </div>
-                      ) : (
-                        <p className="text-lg leading-8 text-[#665246]">
-                          {selectedNotice.summary}
-                        </p>
-                      )}
+                      <p className="text-lg leading-8 text-[#665246]">
+                        {selectedNotice.summary}
+                      </p>
 
                     </div>
                   </div>
@@ -877,7 +861,7 @@ export default function VendorNotices() {
                   {/* IMPORTANT INFO */}
                   {/* ========================================= */}
 
-                  <div className="grid md:grid-cols-2 border-b border-[#EAE1DA]">
+                  <div className="grid md:grid-cols-3 border-b border-[#EAE1DA]">
 
                     <div className="py-7 md:pr-8 md:border-r border-[#EAE1DA]">
 
@@ -899,7 +883,7 @@ export default function VendorNotices() {
 
                     </div>
 
-                    <div className="py-7 md:pl-8">
+                    <div className="py-7 md:px-8 md:border-r border-[#EAE1DA]">
 
                       <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-[#9A8678]">
                         Notice location
@@ -914,6 +898,22 @@ export default function VendorNotices() {
                         <p className="text-lg font-semibold text-[#5A4638]">
                           {selectedNotice.location ||
                             "Not specified"}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    <div className="py-7 md:pl-8">
+
+                      <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-[#9A8678]">
+                        Reference number
+                      </p>
+
+                      <div className="flex items-center gap-3 mt-3">
+                        <FileText size={19} className="text-[#C97B63]" />
+
+                        <p className="text-lg font-semibold text-[#5A4638]">
+                          {selectedNotice.referenceNumber || "Not specified"}
                         </p>
                       </div>
 
@@ -951,6 +951,22 @@ export default function VendorNotices() {
                     </div>
 
                   </div>
+
+                  {selectedNotice.importantPoints?.length > 0 && (
+                    <div className="py-7 border-b border-[#EAE1DA]">
+                      <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-[#9A8678]">
+                        Important points
+                      </p>
+                      <ul className="mt-3 space-y-2 text-sm leading-6 text-[#665246]">
+                        {selectedNotice.importantPoints.map((point, index) => (
+                          <li key={`${index}-${point}`} className="flex gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#C97B63] mt-2 flex-shrink-0" />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {/* ========================================= */}
                   {/* ORIGINAL OCR TEXT */}
@@ -1086,6 +1102,32 @@ export default function VendorNotices() {
 
               {!processing ? (
                 <>
+                  <div className="mb-6">
+                    <label htmlFor="notice-text" className="text-sm font-semibold text-[#5A4638]">
+                      Paste notice text
+                    </label>
+                    <textarea
+                      id="notice-text"
+                      value={noticeText}
+                      onChange={(event) => setNoticeText(event.target.value)}
+                      rows={5}
+                      placeholder="Paste the complete notice text here..."
+                      className="w-full mt-2 border border-[#DED1C6] rounded-lg px-4 py-3 text-sm leading-6 outline-none focus:border-[#C97B63] resize-y"
+                    />
+                    <button
+                      type="button"
+                      onClick={decodePastedNotice}
+                      disabled={!noticeText.trim()}
+                      className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 bg-[#C97B63] text-white rounded-lg text-sm font-semibold disabled:opacity-40"
+                    >
+                      <Sparkles size={15} />
+                      Decode pasted text
+                    </button>
+                    <p className="text-xs text-[#9A8678] mt-4">
+                      Or upload an image and extract its text with OCR.
+                    </p>
+                  </div>
+
                   {/* OCR LANGUAGE */}
 
                   <div className="mb-5">

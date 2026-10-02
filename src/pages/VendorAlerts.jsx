@@ -16,8 +16,11 @@ import {
   Megaphone,
   ShieldAlert,
   UserRound,
+  Plus,
+  Loader2,
 } from "lucide-react";
 import VendorNavbar from "../components/VendorNavbar";
+import { createAlert as requestCreateAlert } from "../services/aiApi";
 
 const initialAlerts = [
   {
@@ -145,6 +148,15 @@ export default function VendorAlerts() {
 
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
+  const [showCreateAlert, setShowCreateAlert] = useState(false);
+  const [creatingAlert, setCreatingAlert] = useState(false);
+  const [createError, setCreateError] = useState("");
+  const [alertForm, setAlertForm] = useState({
+    title: "",
+    message: "",
+    alert_type: "notice",
+    deadline: "",
+  });
 
   const filteredAlerts = useMemo(() => {
     return alerts.filter((alert) => {
@@ -199,6 +211,79 @@ export default function VendorAlerts() {
 
     if (selected) {
       setSelectedAlert(selected);
+    }
+  };
+
+  const handleCreateAlert = async (event) => {
+    event.preventDefault();
+
+    const deadline = alertForm.deadline
+      ? alertForm.deadline.split("-").reverse().join("/")
+      : null;
+
+    setCreateError("");
+    setCreatingAlert(true);
+
+    try {
+      const response = await requestCreateAlert({
+        ...alertForm,
+        deadline,
+      });
+      const generated = response.data;
+
+      if (!generated || typeof generated !== "object") {
+        throw new Error("AI service is currently unavailable. Please try again.");
+      }
+
+      const typeLabels = {
+        notice: "Information",
+        document: "Document",
+        area_update: "Area Update",
+        general: "Information",
+      };
+      const date = new Date();
+      const priority = generated.priority === "high" || generated.priority === "expired"
+        ? "Important"
+        : generated.priority === "medium"
+        ? "Reminder"
+        : "Normal";
+      const newAlert = {
+        id: `created-${Date.now()}`,
+        title: generated.title || alertForm.title,
+        type: typeLabels[generated.type] || "Information",
+        source: "StreetBridge",
+        date: date.toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+        time: date.toLocaleTimeString("en-IN", {
+          hour: "numeric",
+          minute: "2-digit",
+        }),
+        location: "Sector 18",
+        status: "Unread",
+        priority,
+        tag: "AI-generated alert",
+        message: generated.message || alertForm.message,
+        action: generated.deadline
+          ? `Keep the ${generated.deadline} deadline in mind and confirm the instructions with the issuing authority.`
+          : "Review the alert details and confirm important information with the issuing authority.",
+      };
+
+      setAlerts((prev) => [newAlert, ...prev]);
+      setSelectedAlert(newAlert);
+      setAlertForm({
+        title: "",
+        message: "",
+        alert_type: "notice",
+        deadline: "",
+      });
+      setShowCreateAlert(false);
+    } catch (error) {
+      setCreateError(error.message || "AI service is currently unavailable. Please try again.");
+    } finally {
+      setCreatingAlert(false);
     }
   };
 
@@ -259,15 +344,104 @@ export default function VendorAlerts() {
               </p>
             </div>
 
-            <button
-              onClick={markAllAsRead}
-              disabled={unreadCount === 0}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 border border-[#DED1C6] rounded-lg text-sm font-semibold text-[#665347] hover:bg-[#FFF9F4] transition disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <Check size={16} />
-              Mark all as read
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => {
+                  setCreateError("");
+                  setShowCreateAlert((visible) => !visible);
+                }}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#C97B63] rounded-lg text-sm font-semibold text-white hover:bg-[#B86D56] transition"
+              >
+                <Plus size={16} />
+                Create alert
+              </button>
+
+              <button
+                onClick={markAllAsRead}
+                disabled={unreadCount === 0}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 border border-[#DED1C6] rounded-lg text-sm font-semibold text-[#665347] hover:bg-[#FFF9F4] transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Check size={16} />
+                Mark all as read
+              </button>
+            </div>
           </div>
+
+          {showCreateAlert && (
+            <form
+              onSubmit={handleCreateAlert}
+              className="grid md:grid-cols-2 gap-4 py-6 border-b border-[#E8DCD2]"
+            >
+              <label className="text-sm font-semibold text-[#5A4638]">
+                Alert title
+                <input
+                  required
+                  value={alertForm.title}
+                  onChange={(event) => setAlertForm((prev) => ({ ...prev, title: event.target.value }))}
+                  className="w-full mt-2 border border-[#DED1C6] rounded-lg px-4 py-3 text-sm font-normal outline-none focus:border-[#C97B63]"
+                />
+              </label>
+
+              <label className="text-sm font-semibold text-[#5A4638]">
+                Alert type
+                <select
+                  value={alertForm.alert_type}
+                  onChange={(event) => setAlertForm((prev) => ({ ...prev, alert_type: event.target.value }))}
+                  className="w-full mt-2 border border-[#DED1C6] rounded-lg px-4 py-3 text-sm font-normal outline-none focus:border-[#C97B63]"
+                >
+                  <option value="notice">Notice</option>
+                  <option value="document">Document</option>
+                  <option value="area_update">Area update</option>
+                  <option value="general">General</option>
+                </select>
+              </label>
+
+              <label className="text-sm font-semibold text-[#5A4638] md:col-span-2">
+                Message
+                <textarea
+                  required
+                  rows={3}
+                  value={alertForm.message}
+                  onChange={(event) => setAlertForm((prev) => ({ ...prev, message: event.target.value }))}
+                  className="w-full mt-2 border border-[#DED1C6] rounded-lg px-4 py-3 text-sm font-normal leading-6 outline-none focus:border-[#C97B63] resize-y"
+                />
+              </label>
+
+              <label className="text-sm font-semibold text-[#5A4638]">
+                Deadline
+                <input
+                  type="date"
+                  value={alertForm.deadline}
+                  onChange={(event) => setAlertForm((prev) => ({ ...prev, deadline: event.target.value }))}
+                  className="w-full mt-2 border border-[#DED1C6] rounded-lg px-4 py-3 text-sm font-normal outline-none focus:border-[#C97B63]"
+                />
+              </label>
+
+              <div className="flex items-end gap-3">
+                <button
+                  type="submit"
+                  disabled={creatingAlert || !alertForm.title.trim() || !alertForm.message.trim()}
+                  className="inline-flex items-center gap-2 px-5 py-3 bg-[#C97B63] text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                >
+                  {creatingAlert && <Loader2 size={15} className="animate-spin" />}
+                  {creatingAlert ? "Creating..." : "Create alert"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateAlert(false)}
+                  className="px-4 py-3 border border-[#DED1C6] rounded-lg text-sm font-semibold text-[#665347]"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              {createError && (
+                <p role="alert" className="md:col-span-2 text-sm text-[#A94F45]">
+                  {createError}
+                </p>
+              )}
+            </form>
+          )}
 
           {/* ================================================= */}
           {/* SUMMARY STRIP */}
