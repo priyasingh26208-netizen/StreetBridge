@@ -1,0 +1,44 @@
+[
+  {
+    "id": "registration_1",
+    "topic": "vendor_registration",
+    "title": "Vendor Registration",
+    "content": "Street vendor registration ke liye relevant local municipal authority ya vending authority ke process ko follow karna hota hai. Application submit karne se pehle required documents aur eligibility requirements verify karein."
+  },
+  {
+    "id": "certificate_1",
+    "topic": "vendor_certificate",
+    "title": "Vendor Certificate",
+    "content": "Vendor certificate ke liye relevant local authority ke certificate application process ko follow karein. Certificate ke liye required documents aur eligibility local authority se verify karein."
+  },
+  {
+    "id": "documents_1",
+    "topic": "required_documents",
+    "title": "Required Documents",
+    "content": "Vendor application ke required documents local authority aur application type ke according different ho sakte hain. Current document list official authority se verify karein."
+  },
+  {
+    "id": "notice_1",
+    "topic": "government_notice",
+    "title": "Government Notice",
+    "content": "Agar vendor ko government ya municipal notice receive hota hai, to notice mein diye gaye deadline, authority, reference number aur required action ko carefully check karna chahiye."
+  },
+  {
+    "id": "grievance_1",
+    "topic": "grievance",
+    "title": "Vendor Grievance",
+    "content": "Vendor grievance ke liye problem, location, relevant authority aur available supporting details collect karke ek clear grievance application prepare ki ja sakti hai."
+  },
+  {
+    "id": "scheme_1",
+    "topic": "government_scheme",
+    "title": "Government Schemes",
+    "content": "Street vendors ke liye government schemes ki eligibility, benefits aur application process scheme aur location ke according different ho sakti hai. Current details official government sources se verify karein."
+  },
+  {
+    "id": "payment_1",
+    "topic": "digital_payment",
+    "title": "Digital Payments",
+    "content": "Street vendors UPI jaise digital payment methods accept kar sakte hain. Payment setup ke liye bank ya authorised payment service provider ki current instructions follow karein."
+  }
+]

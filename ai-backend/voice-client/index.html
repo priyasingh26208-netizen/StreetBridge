@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StreetBridge Voice Assistant</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #status {
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>StreetBridge Voice Assistant</h1>
+
+    <button id="startBtn">
+        🎤 Start Voice
+    </button>
+
+    <button id="stopBtn">
+        ⏹ Stop
+    </button>
+
+    <div id="status">
+        Ready
+    </div>
+
+    <div id="output">
+        <p><strong>You:</strong> <span id="userText">-</span></p>
+
+        <p><strong>AI:</strong> <span id="aiText">-</span></p>
+
+        <p>
+            <strong>Intent:</strong>
+            <span id="intent">-</span>
+        </p>
+    </div>
+
+    <script type="module">
+
+        import {
+            startVoiceAssistant,
+            stopVoiceAssistant
+        } from "./voice_assistant.js";
+
+
+        const startBtn = document.getElementById("startBtn");
+        const stopBtn = document.getElementById("stopBtn");
+
+        const status = document.getElementById("status");
+        const userText = document.getElementById("userText");
+        const aiText = document.getElementById("aiText");
+        const intent = document.getElementById("intent");
+
+
+        startBtn.addEventListener("click", () => {
+
+            status.textContent = "🎤 Listening...";
+
+            startVoiceAssistant(
+
+                (data) => {
+
+                    userText.textContent =
+                        data.input_text || "-";
+
+                    aiText.textContent =
+                        data.reply || data.message || "-";
+
+                    intent.textContent =
+                        data.intent || "-";
+
+                    status.textContent =
+                        "✅ Response received";
+
+                },
+
+                (error) => {
+
+                    status.textContent =
+                        "❌ " + error;
+
+                }
+            );
+        });
+
+
+        stopBtn.addEventListener("click", () => {
+
+            stopVoiceAssistant();
+
+            status.textContent =
+                "⏹ Voice stopped";
+
+        });
+
+    </script>
+
+</body>
+</html>

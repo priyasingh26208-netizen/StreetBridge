@@ -1,0 +1,372 @@
+text,intent
+"How can I register as a street vendor?",registration
+"Mujhe street vendor ke liye register karna hai",registration
+"Vendor registration kaise hota hai?",registration
+"How do I apply for vendor registration?",registration
+"Mujhe vendor registration karwana hai",registration
+"Where can I register as a street vendor?",registration
+"Street vendor registration process kya hai?",registration
+"Vendor registration ke liye kya karna padega?",registration
+"How can I get my vendor certificate?",certificate
+"Mujhe vendor certificate chahiye",certificate
+"Vendor certificate kaise milega?",certificate
+"Where can I get my vending certificate?",certificate
+"Mera vendor certificate kaise banega?",certificate
+"How do I apply for a certificate?",certificate
+"Vendor certificate ke liye apply kaise karu?",certificate
+"Which documents are required for street vending?",documents
+"Street vendor banne ke liye kaunse documents chahiye?",documents
+"Mujhe kaun kaun se documents dene honge?",documents
+"What documents do I need?",documents
+"Documents required for vendor registration",documents
+"Registration ke liye kya documents lagenge?",documents
+"Kaunse papers submit karne hain?",documents
+"Mujhe government notice mila hai",notice
+"I received a notice from the municipality",notice
+"Is notice ka matlab kya hai?",notice
+"Mujhe ek official notice mila hai",notice
+"Please explain this government notice",notice
+"Municipality ne notice diya hai",notice
+"Notice mein kya likha hai?",notice
+"Meri vendor application pending hai",grievance
+"My vendor application has not been processed",grievance
+"Meri complaint ka solution nahi hua",grievance
+"I want to file a complaint",grievance
+"Mujhe grievance submit karni hai",grievance
+"Authority ne meri problem solve nahi ki",grievance
+"Application approve nahi hui",grievance
+"Government scheme for street vendors",scheme
+"Street vendors ke liye kaunsi government scheme hai?",scheme
+"Mujhe government scheme ke baare mein batao",scheme
+"Are there any schemes for street vendors?",scheme
+"Street vendor scheme kaise milegi?",scheme
+"PM scheme for vendors kya hai?",scheme
+"Vendor ke liye financial help scheme hai kya?",scheme
+"Digital payment kaise accept karu?",digital_payment
+"How can I accept UPI payments?",digital_payment
+"Mujhe UPI payment lena hai",digital_payment
+"QR code se payment kaise lete hain?",digital_payment
+"How do I receive digital payments?",digital_payment
+"Customer se online payment kaise lu?",digital_payment
+"UPI kaise use karna hai?",digital_payment
+
+"Mujhe vendor ke taur par registration karna hai",registration
+"Main street vending registration ke liye apply karna chahta hoon",registration
+"Vendor registration ke liye application kaha deni hai",registration
+"Street vendor registration ka form kaha milega",registration
+"Registration ke liye online apply kar sakte hain kya",registration
+"How do I register my vending business",registration
+"I want to register as a vendor",registration
+"Where do I apply for vendor registration",registration
+"Vendor registration application kaise bharni hai",registration
+"Street vendor registration process samjhao",registration
+"Vendor registration ke liye mujhe help chahiye",registration
+"Main apna vending registration karwana chahta hu",registration
+"How can I become a registered street vendor",registration
+"Vendor registration ka status kaise check karu",registration
+"Mera vendor registration karna hai",registration
+
+"Vendor certificate ke liye kya karna hoga",certificate
+"Street vending certificate kaise milta hai",certificate
+"Mera vending certificate chahiye",certificate
+"Certificate of vending kaise milega",certificate
+"Vendor certificate kaha se milega",certificate
+"How can I get a vending certificate",certificate
+"I need a vendor certificate",certificate
+"Vending certificate ke liye apply karna hai",certificate
+"Mujhe certificate ke process ki information chahiye",certificate
+"Vendor certificate banwane ka process batao",certificate
+"Can I apply for a vendor certificate",certificate
+"Mera vending certificate kaise banega",certificate
+"Vendor certificate application kaha karni hai",certificate
+"Certificate ke liye help chahiye",certificate
+"Vending certificate related information chahiye",certificate
+
+"Registration ke time kaunse papers lagenge",documents
+"Vendor registration ke liye papers batao",documents
+"Mujhe documents ki list chahiye",documents
+"Which papers are needed for registration",documents
+"Application ke saath kya submit karna hai",documents
+"Kaunse documents submit karne hain",documents
+"Vendor application ke documents kya hain",documents
+"Required paperwork kya hai",documents
+"Street vendor ke documents batao",documents
+"Registration ke liye document list kaha milegi",documents
+"What paperwork do I need",documents
+"Vendor banne ke liye papers kaunse hain",documents
+"Documents submit kaha karne hain",documents
+"Mere paas kaunse documents hone chahiye",documents
+"Application ke liye required documents batao",documents
+
+"Notice ko samjha do",notice
+"Government notice ka matlab kya hai",notice
+"Mujhe ek municipal notice receive hua",notice
+"Notice mein kya action lena hai",notice
+"Is notice mein deadline kya hai",notice
+"Notice ka simple meaning batao",notice
+"Can you explain this notice",notice
+"I got a notice from the authority",notice
+"What does this government notice mean",notice
+"Notice ke baare mein help chahiye",notice
+"Municipal notice mila hai mujhe",notice
+"Official notice samajh nahi aa raha",notice
+"Notice mein kya karna hai",notice
+"Mujhe notice ka explanation chahiye",notice
+"Is government notice ko explain karo",notice
+
+"Meri application ka koi update nahi hai",grievance
+"Meri complaint solve nahi hui",grievance
+"Mujhe complaint karni hai",grievance
+"Authority ne meri problem solve nahi ki",grievance
+"Meri application pending hai",grievance
+"Meri problem ki complaint kaha karu",grievance
+"I want to raise a grievance",grievance
+"My complaint is still pending",grievance
+"My application has not been processed",grievance
+"I need help with a complaint",grievance
+"Authority ke against complaint karni hai",grievance
+"Meri problem ka solution nahi mila",grievance
+"Grievance kaise file karu",grievance
+"Complaint submit karne mein help chahiye",grievance
+"Meri application par action nahi hua",grievance
+
+"Street vendors ke liye scheme batao",scheme
+"Vendor ke liye government scheme chahiye",scheme
+"Kya vendors ke liye koi scheme hai",scheme
+"Government se vendor ko kya benefits milte hain",scheme
+"Vendor welfare scheme ke baare mein batao",scheme
+"Are there government schemes for vendors",scheme
+"Street vendor scheme information chahiye",scheme
+"Government scheme ke liye eligibility kya hai",scheme
+"Vendor scheme ke baare mein help chahiye",scheme
+"Street vendor ke liye government support hai kya",scheme
+"Koi scheme hai jo vendors ke liye ho",scheme
+"Government benefits for street vendors",scheme
+"Vendor scheme kaise check karu",scheme
+"Street vendors ke liye financial support scheme hai kya",scheme
+"Government scheme apply kaise karu",scheme
+
+"Customer se UPI payment lena hai",digital_payment
+"QR code se payment kaise receive karu",digital_payment
+"Digital payment setup kaise karna hai",digital_payment
+"Online payment accept karna hai",digital_payment
+"UPI QR code kaise banega",digital_payment
+"How can I accept digital payments",digital_payment
+"I want to accept UPI payments",digital_payment
+"Customer online payment kaise karega",digital_payment
+"UPI payment receive karne ka tarika batao",digital_payment
+"Digital payment ke liye kya karna hai",digital_payment
+"QR payment kaise lena hai",digital_payment
+"Online payment lene ke liye help chahiye",digital_payment
+"UPI se customer se payment kaise lu",digital_payment
+"Digital payment kaise start karu",digital_payment
+"Payment QR code related help chahiye",digital_payment
+
+"Main street vendor ke liye registration kaise karu",registration
+"Apni vending shop register karani hai",registration
+"Vendor registration ke liye kaha apply karna padega",registration
+
+"Authority ko registration ke liye kaunse papers chahiye",documents
+"Kaun kaun se documents submit karne padenge",documents
+"Registration ke liye paperwork kya lagega",documents
+
+"Mujhe nagar nigam se ek notice aaya hai",notice
+"Municipality ka notice samajh nahi aa raha",notice
+"Authority ke letter mein kya likha hai",notice
+
+"Meri complaint ka response nahi mila",grievance
+"Meri problem par authority ne action nahi liya",grievance
+"Complaint abhi tak pending hai",grievance
+
+"Vendors ko sarkar se financial assistance milti hai kya",scheme
+"Street vendor ke liye financial support chahiye",scheme
+"Vendor ke liye government benefit kaise milega",scheme
+
+"QR scan se customer payment karega kya",digital_payment
+"Main QR code se payment lena chahta hoon",digital_payment
+"Customer se online payment receive kaise karu",digital_payment
+
+"Vendor certificate banwane ka process kya hai",certificate
+"Mujhe vending certificate ke liye apply karna hai",certificate
+"Certificate of vending kaha se milega",certificate
+
+Mujhe street vendor ke taur par register karna hai,registration
+Vendor registration kaise karu,registration
+Street vendor registration ke liye apply karna hai,registration
+Apna vendor registration karwana hai,registration
+Vendor registration form kaha milega,registration
+Registration ke liye online apply kar sakte hain,registration
+Mera vendor registration kaise hoga,registration
+Street vending registration process batao,registration
+Mujhe apni vending activity register karni hai,registration
+Vendor ke registration ke liye kya process hai,registration
+Naye vendor ka registration kaise hota hai,registration
+Vendor registration karne ke liye kaha jana hoga,registration
+Mujhe vending registration ki information chahiye,registration
+Registration application kaise submit karu,registration
+Street vendor registration kab karwana hota hai,registration
+Vendor certificate ke liye apply kaise kare,certificate
+Mujhe vending certificate chahiye,certificate
+Street vendor certificate kaise milega,certificate
+Mera vendor certificate banana hai,certificate
+Certificate ke liye application kaha deni hai,certificate
+Vendor certificate issue hone mein kitna time lagta hai,certificate
+Vending certificate renew kaise kare,certificate
+Certificate ke liye eligibility kya hai,certificate
+Mujhe certificate application submit karni hai,certificate
+Vendor certificate ka status kaise check karu,certificate
+Certificate banwane ka process batao,certificate
+Street vending certificate kaha se milega,certificate
+Mera certificate kho gaya hai kya karu,certificate
+Vendor certificate ke liye kya documents chahiye,certificate
+Certificate renewal ka process batao,certificate
+Registration ke liye kaunse documents chahiye,documents
+Vendor application mein kya papers lagenge,documents
+Street vendor ko kaun kaun se documents dene hote hain,documents
+Documents ki list batao,documents
+Application ke saath kya attach karna hai,documents
+Vendor registration ke papers kya hain,documents
+Kaunse documents required hain,documents
+Mujhe required documents ki information chahiye,documents
+Identity proof ke alawa aur kya chahiye,documents
+Vendor form ke saath kaunse papers lagenge,documents
+Authority ko kaunse documents submit karne hain,documents
+Document verification ke liye kya chahiye,documents
+Application submit karne ke liye papers batao,documents
+Vendor ke liye documents ki list kaha milegi,documents
+Mere documents complete hain ya nahi,documents
+Mujhe municipal notice mila hai,notice
+Nagar nigam ka notice aaya hai,notice
+Government notice ka matlab kya hai,notice
+Mujhe ek official notice receive hua hai,notice
+Notice mein kya likha hai samjhao,notice
+Municipal authority ne notice bheja hai,notice
+Mujhe vending se related notice mila hai,notice
+Notice ka response kaise dena hai,notice
+Notice ki deadline kya hai,notice
+Government notice ko simple language mein samjhao,notice
+Mujhe notice ka meaning samajh nahi aa raha,notice
+Notice mein kya action lena hai,notice
+Nagar nigam ke notice ka kya karu,notice
+Official notice ki important date batao,notice
+Notice ke against response kaise submit kare,notice
+Meri complaint ka solution nahi hua,grievance
+Maine complaint ki thi lekin response nahi mila,grievance
+Meri grievance pending hai,grievance
+Authority meri complaint nahi sun rahi,grievance
+Vendor problem ki complaint kaha kare,grievance
+Mujhe grievance file karni hai,grievance
+Complaint submit karne ka process batao,grievance
+Meri problem ka solution nahi mil raha,grievance
+Municipality ko complaint kaise bheju,grievance
+Meri vendor complaint pending hai,grievance
+Authority ko grievance kaise submit karu,grievance
+Complaint letter likhne mein help chahiye,grievance
+Mujhe grievance application draft karni hai,grievance
+Vendor issue ki complaint kaise kare,grievance
+Meri complaint par koi action nahi hua,grievance
+Street vendors ke liye government scheme hai kya,scheme
+Vendor ke liye sarkari yojana kaun si hai,scheme
+Street vendor loan scheme ke baare mein batao,scheme
+Government vendor scheme kaise milegi,scheme
+Vendors ko financial help milti hai kya,scheme
+Street vendor ke liye subsidy available hai kya,scheme
+Vendor scheme ke liye eligibility kya hai,scheme
+Sarkari yojana mein apply kaise kare,scheme
+Vendors ke liye government benefits kya hain,scheme
+Street vendor loan ke liye kaha apply kare,scheme
+Mujhe vendor scheme ki information chahiye,scheme
+Government scheme ka form kaha milega,scheme
+Vendor ke liye financial assistance kaise milegi,scheme
+Street vendors ke liye koi yojana batao,scheme
+Scheme ka benefit kaise milega,scheme
+Customer QR code se payment kaise karega,digital_payment
+UPI payment kaise receive karu,digital_payment
+Vendor ke liye QR payment setup kaise kare,digital_payment
+Mujhe digital payment start karna hai,digital_payment
+Customer online payment kaise kare,digital_payment
+QR code payment kaise milega,digital_payment
+UPI se payment receive karne ka process batao,digital_payment
+Digital payment ke liye kya karna hoga,digital_payment
+Vendor QR code kaha se banega,digital_payment
+Customer ko UPI payment kaise lena hai,digital_payment
+Meri shop par QR payment lagana hai,digital_payment
+Online payment accept kaise karu,digital_payment
+UPI QR kaise use karte hain,digital_payment
+Digital payment setup karna hai,digital_payment
+QR scan karke payment kaise receive hoti hai,digital_payment
+
+Nagar nigam ne mujhe written notice bheja hai,notice
+Mujhe municipality ka official letter receive hua,notice
+Authority se notice mila hai aur mujhe samajh nahi aa raha,notice
+Mere paas vending ke regarding ek notice aaya hai,notice
+Municipal notice mein kya action lena hai,notice
+Mujhe authority ke notice ka reply dena hai,notice
+Notice par di hui date ka kya matlab hai,notice
+Mujhe eviction notice mila hai,notice
+Nagar nigam ke letter mein deadline di hui hai,notice
+Government authority ke notice ko explain karo,notice
+
+Registration application ke liye identity proof chahiye kya,documents
+Vendor registration mein address proof lagega kya,documents
+Application submit karte waqt kaunse papers attach karne hain,documents
+Vendor registration ke documents ki list batao,documents
+Mujhe registration ke liye required paperwork jaana hai,documents
+Authority ne documents submit karne ko bola hai,documents
+Vendor application ke saath ID proof dena hai kya,documents
+Registration ke liye proof of address required hai kya,documents
+Mere paas kaunse documents hone chahiye,documents
+Application ke documents kaun verify karega,documents
+
+Street vendor ke roop mein registration karwana hai,registration
+Mujhe naye vendor ke liye registration apply karna hai,registration
+Vending registration application submit karni hai,registration
+Meri dukaan ko vendor ke naam se register karna hai,registration
+Street vending ke liye registration kaha hota hai,registration
+Vendor registration ka process kya hai,registration
+Mujhe vendor registration start karna hai,registration
+Registration ke liye application kaha submit hogi,registration
+Street vendor registration karne ka tareeka batao,registration
+Vendor ke taur par officially register kaise karu,registration
+
+Vendor certificate issue karwana hai,certificate
+Mujhe street vending certificate chahiye,certificate
+Vendor certificate ke liye application deni hai,certificate
+Mera vending certificate banana hai,certificate
+Street vendor certificate kaha se obtain hoga,certificate
+Vendor certificate ke liye apply karne ka process batao,certificate
+Mujhe apna vendor certificate renew karwana hai,certificate
+Certificate application ka status kaha check hoga,certificate
+Vending certificate kab issue hota hai,certificate
+Vendor certificate banwane ke liye process kya hai,certificate
+
+Hello,unknown
+Hi,unknown
+How are you,unknown
+Good morning,unknown
+Good evening,unknown
+Thank you,unknown
+Thanks,unknown
+What is your name,unknown
+Who are you,unknown
+Delhi mein weather kaisa hai,unknown
+Aaj mausam kaisa hai,unknown
+Mujhe pizza order karna hai,unknown
+Mujhe movie dekhni hai,unknown
+Cricket ka score kya hai,unknown
+Mujhe ek joke sunao,unknown
+Mujhe music ke baare mein batao,unknown
+Python programming kya hai,unknown
+Laptop kaise kharidu,unknown
+Mujhe train ticket book karni hai,unknown
+Delhi mein tourist places batao,unknown
+Mujhe shopping karni hai,unknown
+Ek story sunao,unknown
+What time is it,unknown
+Mujhe maths ka question solve karna hai,unknown
+Who is the Prime Minister of India,unknown
+Mujhe recipe chahiye,unknown
+Mobile phone kaise repair kare,unknown
+Mujhe English seekhni hai,unknown
+Random question hai,unknown
+Mujhe kuch aur poochna hai,unknown
